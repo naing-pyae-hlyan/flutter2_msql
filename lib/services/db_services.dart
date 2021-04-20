@@ -79,16 +79,37 @@ class DbServices {
       return;
     }
 
-    var d = 'UPDATE $TABLE_NAME'
-        'SET name = hello'
-        'WHERE id = 1';
-
     if (connection != null) {
       await connection
           .query("UPDATE $TABLE_NAME "
               "SET name = '${data.name}', email = '${data.email}', age = '${int.parse(data.age)}' "
               "WHERE id = $id")
-          .then((value) => onSuccess.call('Success'))
+          .then((value) => onSuccess.call('Updated Success'))
+          .onError(
+            (error, stackTrace) => onFailure.call(error.toString()),
+          );
+    }
+
+    connection.close();
+  }
+
+  static Future<void> deleteUser(
+    int id, {
+    @required ValueChanged<String> onSuccess,
+    @required ValueChanged<String> onFailure,
+  }) async {
+    MySqlConnection connection;
+    try {
+      connection = await MySqlConnection.connect(_settings);
+    } catch (e) {
+      onFailure.call(e.toString());
+      return;
+    }
+
+    if (connection != null) {
+      await connection
+          .query("DELETE FROM $TABLE_NAME WHERE id = $id")
+          .then((value) => onSuccess.call('Deleted Success'))
           .onError(
             (error, stackTrace) => onFailure.call(error.toString()),
           );

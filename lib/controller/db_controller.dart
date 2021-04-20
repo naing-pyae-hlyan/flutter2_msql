@@ -32,4 +32,17 @@ class DbController with ChangeNotifier {
     );
     notifyListeners();
   }
+
+  Future<void> deleteUser(
+    int id, {
+    @required ValueChanged<String> onSuccess,
+    @required ValueChanged<String> onFailure,
+  }) async {
+    await DbServices.deleteUser(
+      id,
+      onSuccess: onSuccess,
+      onFailure: onFailure,
+    );
+    notifyListeners();
+  }
 }

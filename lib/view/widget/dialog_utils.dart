@@ -5,6 +5,7 @@ class DialogUtils {
   static Future<void> okCancelDialog(
     BuildContext context, {
     @required String text,
+    VoidCallback onCancel,
     VoidCallback onPressed,
   }) {
     return Future.delayed(Duration.zero, () {
@@ -13,6 +14,13 @@ class DialogUtils {
         builder: (context) => AlertDialog(
           title: Text('$text'),
           actions: [
+            onCancel != null
+                ? MyButton(
+                    'Cancel',
+                    onPressed: () => Navigator.pop(context),
+                    color: Colors.grey,
+                  )
+                : SizedBox.shrink(),
             MyButton(
               'Ok',
               onPressed: () {

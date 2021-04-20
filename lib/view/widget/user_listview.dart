@@ -26,7 +26,24 @@ class UserListView extends StatelessWidget {
     });
   }
 
-  Future<void> _deleteUser(int id) async {}
+  Future<void> _deleteUser(BuildContext context, int id) async {
+    await DialogUtils.okCancelDialog(
+      context,
+      text: 'Are you sure want to delete?',
+      onCancel: () {},
+      onPressed: () async {
+        await context.read<DbController>().deleteUser(
+          id,
+          onSuccess: (msg) async {
+            DialogUtils.okCancelDialog(context, text: msg);
+          },
+          onFailure: (msg) async {
+            DialogUtils.okCancelDialog(context, text: msg);
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +67,7 @@ class UserListView extends StatelessWidget {
           return ListView(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            children: [
+            children: <Widget> [
               for (var data in snapshot.data)
                 _listTiles(
                   context,
@@ -93,7 +110,12 @@ class UserListView extends StatelessWidget {
             icon: Icons.edit,
             onPressed: () => _updateUser(context, id, data: data),
           ),
-          _textButton('Delete', width, icon: Icons.delete, onPressed: () {}),
+          _textButton(
+            'Delete',
+            width,
+            icon: Icons.delete,
+            onPressed: () => _deleteUser(context, id),
+          ),
         ],
       ),
     );
