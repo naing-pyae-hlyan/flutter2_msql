@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         title: 'SQL test',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.orange,
         ),
         home: HomePage(),
       ),
