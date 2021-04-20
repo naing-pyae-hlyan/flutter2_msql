@@ -39,64 +39,29 @@ class DbServices {
     }
     connection.close();
   }
-}
 
-//  Future<void> _getConnection(BuildContext context) async {
-//     var settings = new ConnectionSettings(
-//       host: 'localhost',
-//       port: 3306,
-//       db: 'test',
-//     );
-//
-//     var conn;
-//     try {
-//       conn = await MySqlConnection.connect(settings);
-//       print('Success');
-//     } catch (e) {
-//       print(e.toString());
-//     }
-//
-//     // create a table
-//     // await conn.query(
-//     //   'CREATE TABLE users (id int NOT NULL AUTO_INCREMENT PRIMARY KEY,'
-//     //   'name varchar(255),'
-//     //   'email varchar(255),'
-//     //   'age int)',
-//     // );
-//
-//     // Insert some data
-//     // var result = await conn.query(
-//     //   'INSERT INTO users (name, email, age) value (?, ?, ?)',
-//     //   ['Bob', 'bob@bob.com', 25],
-//     // );
-//     // print('Inserted row id=${result.insertId}');
-//     //
-//     // // Query the db using a param query
-//     // var results = await conn.query(
-//     //   'SELECT name, email, age FROM users WHERE id = ?',
-//     //   [result.insertId],
-//     // );
-//     //
-//     // for (var row in results) {
-//     //   print('Name: ${row[0]}, Email: ${row[1]}, Age: ${row[2]}');
-//     // }
-//     //
-//     // // update some data
-//     // await conn.query(
-//     //   'UPDATE users set age=? WHERE name=?',
-//     //   [26, 'Bob'],
-//     // );
-//     //
-//     // // Query again db using param
-//     // var results2 = await conn.query(
-//     //   'SELECT name, email, age FROM users WHERE id = ?',
-//     //   [result.insertId],
-//     // );
-//     //
-//     // for (var row in results2) {
-//     //   print('Name: ${row[0]}, Email: ${row[1]}, Age: ${row[2]}');
-//     // }
-//
-//     // finally, close connection
-//     await conn.close();
-//   }
+  static Future<dynamic> get getUsers async {
+    MySqlConnection connection;
+    try {
+      connection = await MySqlConnection.connect(_settings);
+    } catch (e) {
+      return e.toString();
+    }
+
+    if (connection != null) {
+      var result;
+
+      try {
+        result = await connection.query(
+          'SELECT * FROM $TABLE_NAME',
+        );
+
+        return result;
+      } catch (e) {
+        return e.toString();
+      }
+    }
+
+    connection.close();
+  }
+}

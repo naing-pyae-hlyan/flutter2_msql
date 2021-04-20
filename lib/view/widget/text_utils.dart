@@ -1,8 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/material.dart';
 
 class TextUtils {
-  static Text headerText(String text) {
-    return Text(
+  static AutoSizeText headerText(String text) {
+    return AutoSizeText(
       text,
       style: TextStyle(
         fontSize: 16,

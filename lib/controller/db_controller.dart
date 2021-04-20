@@ -7,10 +7,14 @@ class DbController with ChangeNotifier {
     UserModel data, {
     @required ValueChanged<String> onSuccess,
     @required ValueChanged<String> onFailure,
-  }) =>
-      DbServices.insetUserData(
-        data,
-        onSuccess: onSuccess,
-        onFailure: onFailure,
-      );
+  }) async {
+    await DbServices.insetUserData(
+      data,
+      onSuccess: onSuccess,
+      onFailure: onFailure,
+    );
+    notifyListeners();
+  }
+
+  Future<void> get getUsers => DbServices.getUsers;
 }
