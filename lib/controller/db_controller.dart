@@ -17,4 +17,19 @@ class DbController with ChangeNotifier {
   }
 
   Future<void> get getUsers => DbServices.getUsers;
+
+  Future<void> updateUser(
+    int id, {
+    @required UserModel data,
+    @required ValueChanged<String> onSuccess,
+    @required ValueChanged<String> onFailure,
+  }) async {
+    await DbServices.updateUser(
+      id,
+      data: data,
+      onSuccess: onSuccess,
+      onFailure: onFailure,
+    );
+    notifyListeners();
+  }
 }

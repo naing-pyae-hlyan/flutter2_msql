@@ -6,6 +6,7 @@ import 'package:flutter2_mysql/view/widget/text_utils.dart';
 
 Future<void> openCrudDialog(
   BuildContext context, {
+  UserModel data,
   @required ValueChanged<UserModel> saveOnPressed,
 }) async {
   Future.delayed(Duration.zero, () {
@@ -14,6 +15,7 @@ Future<void> openCrudDialog(
       barrierDismissible: false,
       builder: (context) => Dialog(
         child: CrudDialog(
+          data: data,
           saveOnPressed: saveOnPressed,
         ),
       ),
@@ -22,8 +24,9 @@ Future<void> openCrudDialog(
 }
 
 class CrudDialog extends StatefulWidget {
-  const CrudDialog({this.saveOnPressed});
+  const CrudDialog({this.data, this.saveOnPressed});
 
+  final UserModel data;
   final ValueChanged<UserModel> saveOnPressed;
 
   @override
@@ -37,6 +40,16 @@ class _CrudDialogState extends State<CrudDialog> {
   final FocusNode _nameFn = FocusNode();
   final FocusNode _emailFn = FocusNode();
   final FocusNode _ageFn = FocusNode();
+
+  @override
+  void initState() {
+    if (widget.data != null) {
+      _nameController.text = widget.data.name;
+      _emailController.text = widget.data.email;
+      _ageController.text = widget.data.age;
+    }
+    super.initState();
+  }
 
   @override
   void dispose() {

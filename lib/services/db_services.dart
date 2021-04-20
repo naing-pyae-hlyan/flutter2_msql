@@ -64,4 +64,36 @@ class DbServices {
 
     connection.close();
   }
+
+  static Future<void> updateUser(
+    int id, {
+    @required UserModel data,
+    @required ValueChanged<String> onSuccess,
+    @required ValueChanged<String> onFailure,
+  }) async {
+    MySqlConnection connection;
+    try {
+      connection = await MySqlConnection.connect(_settings);
+    } catch (e) {
+      onFailure.call(e.toString());
+      return;
+    }
+
+    var d = 'UPDATE $TABLE_NAME'
+        'SET name = hello'
+        'WHERE id = 1';
+
+    if (connection != null) {
+      await connection
+          .query("UPDATE $TABLE_NAME "
+              "SET name = '${data.name}', email = '${data.email}', age = '${int.parse(data.age)}' "
+              "WHERE id = $id")
+          .then((value) => onSuccess.call('Success'))
+          .onError(
+            (error, stackTrace) => onFailure.call(error.toString()),
+          );
+    }
+
+    connection.close();
+  }
 }

@@ -2,11 +2,31 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter2_mysql/controller/db_controller.dart';
 import 'package:flutter2_mysql/models/user_model.dart';
+import 'package:flutter2_mysql/view/widget/crud_dialog.dart';
+import 'package:flutter2_mysql/view/widget/dialog_utils.dart';
 import 'package:provider/provider.dart';
 
 class UserListView extends StatelessWidget {
   static double mainWidth = 0.0;
   static double width = 0.0;
+
+  Future<void> _updateUser(BuildContext context, int id,
+      {@required UserModel data}) async {
+    await openCrudDialog(context, data: data, saveOnPressed: (resp) async {
+      await context.read<DbController>().updateUser(
+        id,
+        data: resp,
+        onSuccess: (msg) async {
+          DialogUtils.okCancelDialog(context, text: msg);
+        },
+        onFailure: (msg) async {
+          DialogUtils.okCancelDialog(context, text: msg);
+        },
+      );
+    });
+  }
+
+  Future<void> _deleteUser(int id) async {}
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +53,7 @@ class UserListView extends StatelessWidget {
             children: [
               for (var data in snapshot.data)
                 _listTiles(
+                  context,
                   data['id'],
                   UserModel(
                     data['name'],
@@ -49,7 +70,7 @@ class UserListView extends StatelessWidget {
     );
   }
 
-  Widget _listTiles(int id, UserModel data) {
+  Widget _listTiles(BuildContext context, int id, UserModel data) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       margin: const EdgeInsets.all(8),
@@ -66,7 +87,12 @@ class UserListView extends StatelessWidget {
           _softText(data.name, width),
           _softText(data.email, width),
           _softText(data.age, width / 7),
-          _textButton('Edit', width, icon: Icons.edit, onPressed: () {}),
+          _textButton(
+            'Edit',
+            width,
+            icon: Icons.edit,
+            onPressed: () => _updateUser(context, id, data: data),
+          ),
           _textButton('Delete', width, icon: Icons.delete, onPressed: () {}),
         ],
       ),
