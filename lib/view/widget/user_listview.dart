@@ -66,8 +66,9 @@ class UserListView extends StatelessWidget {
         if (snapshot.hasData) {
           return ListView(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            children: <Widget> [
+            physics: BouncingScrollPhysics(),
+            children: <Widget>[
+              _listTitleTiles,
               for (var data in snapshot.data)
                 _listTiles(
                   context,
@@ -87,7 +88,55 @@ class UserListView extends StatelessWidget {
     );
   }
 
+  Widget get _listTitleTiles {
+    return _commonContainerWithWrap(
+      children: <Widget>[
+        _softText('ID', width / 7, isHeader: true),
+        _softText('Name', width, isHeader: true),
+        _softText('Email', width, isHeader: true),
+        _softText('Age', width / 7, isHeader: true),
+        _textButton(
+          'Edit',
+          width,
+          icon: Icons.edit,
+          onPressed: null,
+          isHeader: true,
+        ),
+        _textButton(
+          'Delete',
+          width,
+          icon: Icons.delete,
+          onPressed: null,
+          isHeader: true,
+        ),
+      ],
+    );
+  }
+
   Widget _listTiles(BuildContext context, int id, UserModel data) {
+    return _commonContainerWithWrap(
+      children: <Widget>[
+        _softText('$id.', width / 7),
+        _softText(data.name, width),
+        _softText(data.email, width),
+        _softText(data.age, width / 7),
+        _textButton(
+          'Edit',
+          width,
+          icon: Icons.edit,
+          onPressed: () => _updateUser(context, id, data: data),
+        ),
+        _textButton(
+          'Delete',
+          width,
+          icon: Icons.delete,
+          onPressed: () => _deleteUser(context, id),
+        ),
+      ],
+    );
+  }
+
+  Container _commonContainerWithWrap({@required List<Widget> children}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       margin: const EdgeInsets.all(8),
@@ -99,48 +148,46 @@ class UserListView extends StatelessWidget {
         direction: Axis.horizontal,
         alignment: WrapAlignment.spaceBetween,
         crossAxisAlignment: WrapCrossAlignment.center,
-        children: <Widget>[
-          _softText('$id.', width / 7),
-          _softText(data.name, width),
-          _softText(data.email, width),
-          _softText(data.age, width / 7),
-          _textButton(
-            'Edit',
-            width,
-            icon: Icons.edit,
-            onPressed: () => _updateUser(context, id, data: data),
-          ),
-          _textButton(
-            'Delete',
-            width,
-            icon: Icons.delete,
-            onPressed: () => _deleteUser(context, id),
-          ),
-        ],
+        children: children,
       ),
     );
   }
 
-  Widget _softText(String text, double width) => Container(
+  Widget _softText(String text, double width, {bool isHeader = false}) =>
+      Container(
         width: width,
         child: AutoSizeText(
           text,
           softWrap: true,
+          style: !isHeader ? null : TextStyle(fontWeight: FontWeight.bold),
           maxLines: 1,
           minFontSize: 1,
           overflow: TextOverflow.ellipsis,
         ),
       );
 
+  Widget _iconWithText(
+    String text,
+    double width, {
+    @required IconData icon,
+  }) {
+    return RichText(
+      text: TextSpan(
+        children: [],
+      ),
+    );
+  }
+
   Widget _textButton(
     String text,
     double width, {
     @required IconData icon,
     @required VoidCallback onPressed,
+    bool isHeader = false,
   }) =>
       TextButton.icon(
         onPressed: onPressed,
         icon: Icon(icon, size: 18),
-        label: _softText(text, width / 2.5),
+        label: _softText(text, width / 2.5, isHeader: isHeader),
       );
 }
